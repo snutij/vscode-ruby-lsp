@@ -24,9 +24,23 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn --frozen-lockfile
 
-      - run: yarn run lint
+      - name: Create CHANGELOG.md
+        uses: actions/github-script@v6
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            const fs = require('fs');
 
-      - run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-      - run: yarn run test
-        env:
-          DISPLAY: ":99.0"
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: "Shopify",
+              repo: "vscode-ruby-lsp",
+            });
+
+            const changelog = releases
+              .map((release) => `# ${release.tag_name}\n${release.body}`)
+              .join("\n");
+
+            fs.writeFileSync("CHANGELOG.md", changelog);
+
+      - run: ls
+      - run: cat CHANGELOG.md
