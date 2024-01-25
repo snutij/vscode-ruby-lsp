@@ -20,6 +20,8 @@ jobs:
       - name: Lint
         run: yarn run lint
 
+
+
   build:
     strategy:
       fail-fast: false
