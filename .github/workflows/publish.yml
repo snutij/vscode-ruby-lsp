@@ -34,6 +34,7 @@ jobs:
             });
 
             const changelog = releases
+              .filter((release) => !release.prerelease)
               .map((release) => `# ${release.tag_name}\n${release.body}\n`)
               .join("\n");
 
